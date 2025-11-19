@@ -12,7 +12,7 @@ class MotionDataset:
 
     def __init__(
         self, 
-        motion_files: Sequence[str], body_indexes: Sequence[int], 
+        motion_files: Sequence[str], body_indexes: Sequence[str], 
         amp_obs_cfg: Union[AMPObsBaiscCfg|dict],
         device: str = "cpu",
         ):
@@ -59,14 +59,20 @@ class MotionDataset:
 
         # Build transition index list: (global_index_t, global_index_t+1)
         self.index_t, self.index_tp1 = self._build_transition_indices(traj_lengths, device)
+        self.build_observation()
 
     # ----------------------- Transition index builder -----------------------
 
     @classmethod
-    def from_cfg(cls, cfg: dict, device):
+    def from_cfg(cls, cfg: dict, env, device):
+        body_names = cfg["body_names"]
+        robot = env.scene[cfg["asset_name"]]
+        body_indexes = torch.tensor(
+            robot.find_bodies(body_names, preserve_order=True)[0], dtype=torch.long, device=device
+        )
         obj = cls(
             motion_files = cfg["motion_files"],
-            body_indexes = cfg["body_indexes"],
+            body_indexes = body_indexes,
             amp_obs_cfg  = cfg["amp_obs_cfg"],
             device       = device
             )

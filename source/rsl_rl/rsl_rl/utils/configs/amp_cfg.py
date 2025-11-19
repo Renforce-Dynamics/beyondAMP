@@ -7,13 +7,14 @@ from beyondAMP.amp_obs import AMPObsBaiscCfg
 from dataclasses import MISSING
 
 @configclass
-class AMPPPOAlgorithmCfg(RslRlPpoAlgorithmCfg):
+class AMPPPOAlgorithmCfg(RslRlPpoAlgorithmCfg):    
+    class_name="AMPPPO"
     amp_replay_buffer_size: int = 100000
 
 @configclass
 class AMPDataCfg:
     motion_files: List[str] = MISSING
-    body_indexes: List[str] = MISSING
+    body_names: List[str] = MISSING
     amp_obs_cfg:  AMPObsBaiscCfg = MISSING
 
 @configclass

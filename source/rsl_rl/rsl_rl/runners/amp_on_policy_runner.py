@@ -76,6 +76,7 @@ class AMPOnPolicyRunner:
 
         amp_data = MotionDataset.from_cfg(
             cfg=self.amp_data_cfg,
+            env=env.unwrapped,
             device=device
             )
         amp_normalizer = Normalizer(amp_data.observation_dim)

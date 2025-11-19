@@ -171,3 +171,5 @@ source/fsmLab
 source/robotlib
 
 *.npz
+
+datasets/
