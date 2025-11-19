@@ -97,3 +97,26 @@ With these tools, the dataset organization naturally aligns with the conventions
   year = {2025}
 }
 ```
+
+```bibtex
+@software{zheng2025@trackerLab,
+  author = {Ziang Zheng},
+  title = {TrackerLab: One step unify IsaacLab with multi-mode whole-body control.},
+  url = {https://github.com/interval-package/trackerLab},
+  year = {2025}
+}
+
+@INPROCEEDINGS{Escontrela@amphardware,
+  author={Escontrela, Alejandro and Peng, Xue Bin and Yu, Wenhao and Zhang, Tingnan and Iscen, Atil and Goldberg, Ken and Abbeel, Pieter},
+  booktitle={2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)}, 
+  title={Adversarial Motion Priors Make Good Substitutes for Complex Reward Functions}, 
+  year={2022}
+  }
+
+@article{liao2025beyondmimic,
+  title={Beyondmimic: From motion tracking to versatile humanoid control via guided diffusion},
+  author={Liao, Qiayuan and Truong, Takara E and Huang, Xiaoyu and Tevet, Guy and Sreenath, Koushil and Liu, C Karen},
+  journal={arXiv preprint arXiv:2508.08241},
+  year={2025}
+}
+```
