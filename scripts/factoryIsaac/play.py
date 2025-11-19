@@ -51,7 +51,7 @@ import gymnasium as gym
 import os
 import torch
 
-import fighterTask.train
+import amp_tasks
 # import isaaclab_tasks  # noqa: F401
 from isaaclab_tasks.utils import get_checkpoint_path, parse_env_cfg
 from isaaclab.utils.dict import print_dict
@@ -152,18 +152,16 @@ def main():
     policy = runner.get_inference_policy(device=env.unwrapped.device)
 
     # reset environment
-    obs, _ = env.get_observations() #老版本
-    # obs = env.get_observations() #新版本
+    obs = env.get_observations()
+    # obs = env.get_observations()
 
     # export policy
     export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
     os.makedirs(export_model_dir, exist_ok=True)
     torch.save(runner.alg.actor_critic, os.path.join(export_model_dir, "policy.pth"))
     export_policy_as_onnx(runner.alg.actor_critic, export_model_dir, filename="policy.onnx")
-    export_policy_as_jit(runner.alg.actor_critic, runner.obs_normalizer, export_model_dir, filename="policy.pt")
-    # torch.save(runner.alg.policy, os.path.join(export_model_dir, "policy.pth")) #新版本
-    # export_policy_as_onnx(runner.alg.policy, export_model_dir, filename="policy.onnx") #新版本
-    # export_policy_as_jit(runner.alg.policy, runner.alg.policy.actor_obs_normalizer, export_model_dir, filename="policy.pt") #新版本
+    export_policy_as_jit(runner.alg.actor_critic, None, export_model_dir, filename="policy.pt")
+    # export_policy_as_jit(runner.alg.policy, runner.alg.policy.actor_obs_normalizer, export_model_dir, filename="policy.pt")
 
     print(f"[INFO]: Saving policy to: {export_model_dir}")
 
@@ -178,7 +176,7 @@ def main():
                 # agent stepping
                 actions = policy(obs)
                 # env stepping
-                obs, rewards, dones, infos = env.step(actions)
+                obs, rewards, dones, infos = env.step(actions, not_amp=True)
 
             step += 1
             pbar.update() 

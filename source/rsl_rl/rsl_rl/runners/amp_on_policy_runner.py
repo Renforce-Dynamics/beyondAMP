@@ -43,6 +43,7 @@ from rsl_rl.env import VecEnv
 from rsl_rl.algorithms.amp_discriminator import AMPDiscriminator
 # from rsl_rl.datasets.motion_loader import AMPLoader
 from rsl_rl.utils.utils import Normalizer
+from rsl_rl.env.isaaclab.amp_wrapper import AMPEnvWrapper
 
 from beyondAMP.motion.motion_loader import MotionDataset
 
@@ -59,7 +60,7 @@ class AMPOnPolicyRunner:
         self.policy_cfg = train_cfg["policy"]
         self.amp_data_cfg = train_cfg["amp_data"]
         self.device = device
-        self.env = env
+        self.env:AMPEnvWrapper = env
         if self.env.num_privileged_obs is not None:
             num_critic_obs = self.env.num_privileged_obs 
         else:
@@ -131,7 +132,7 @@ class AMPOnPolicyRunner:
             with torch.inference_mode():
                 for i in range(self.num_steps_per_env):
                     actions = self.alg.act(obs, critic_obs, amp_obs)
-                    obs, privileged_obs, rewards, dones, infos, reset_env_ids, terminal_amp_states = self.env.step(actions)
+                    obs, privileged_obs, rewards, dones, infos, reset_env_ids, terminal_amp_states = self.env.step(actions, not_amp=False)
                     next_amp_obs = self.env.get_amp_observations()
 
                     critic_obs = privileged_obs if privileged_obs is not None else obs
@@ -263,7 +264,7 @@ class AMPOnPolicyRunner:
             }, path)
 
     def load(self, path, load_optimizer=True):
-        loaded_dict = torch.load(path)
+        loaded_dict = torch.load(path, weights_only=False)
         self.alg.actor_critic.load_state_dict(loaded_dict['model_state_dict'])
         self.alg.discriminator.load_state_dict(loaded_dict['discriminator_state_dict'])
         self.alg.amp_normalizer = loaded_dict['amp_normalizer']

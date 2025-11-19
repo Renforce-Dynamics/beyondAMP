@@ -23,7 +23,9 @@ class AMPEnvWrapper(RslRlVecEnvWrapper):
             obs_dict = self.unwrapped._get_observations()
         return obs_dict["amp"]
     
-    def step(self, actions):
+    def step(self, actions, *, not_amp=True):
+        if not_amp:
+            return super().step(actions)
         # clip actions
         if self.clip_actions is not None:
             actions = torch.clamp(actions, -self.clip_actions, self.clip_actions)
