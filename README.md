@@ -37,8 +37,8 @@ scripts/factoryIsaac/play.py --headless --target <path to your ckpt.pt> --video 
 
 | Description             | Video      |
 | ----------------------- | ---------- |
-| AMP Training Preview    | *(insert)* |
-| Motion Matching Example | *(insert)* |
+| AMP Training Preview (3k)    | ![3k](data/demo/amp.gif) |
+| Motion Tracking Example (30k) | ![3k](data/demo/tracking.gif) |
 
 ### Dataset Preparation
 

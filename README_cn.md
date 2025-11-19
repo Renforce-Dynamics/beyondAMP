@@ -41,10 +41,10 @@ scripts/factoryIsaac/train.py --task AMPG1 --headless
 scripts/factoryIsaac/play.py --headless --target <path to your ckpt.pt> --video --num_envs 32
 ```
 
-| 描述 (Description)             | 视频 (Video)      |
-| ------------------------------ | ------------------ |
-| AMP 训练预览 (AMP Training Preview)  | *(insert)*         |
-| 动作匹配示例 (Motion Matching Example) | *(insert)*         |
+| Description             | Video      |
+| ----------------------- | ---------- |
+| AMP Training Preview (3k)    | ![3k](data/demo/amp.gif) |
+| Motion Tracking Example (30k) | ![3k](data/demo/tracking.gif) |
 
 -----
 
