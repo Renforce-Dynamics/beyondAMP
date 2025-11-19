@@ -35,10 +35,10 @@ To evaluate or visualize a trained checkpoint:
 scripts/factoryIsaac/play.py --headless --target <path to your ckpt.pt> --video --num_envs 32
 ```
 
-| Description             | Video      |
-| ----------------------- | ---------- |
-| AMP Training Preview (3k)    | ![3k](data/demo/amp.gif) |
-| Motion Tracking Example (30k) | ![3k](data/demo/tracking.gif) |
+| Description | Video |
+| :--- | :--- |
+| AMP Training Preview (3k) | <img src="data/demo/amp.gif" alt="3k" style="max-height: 200px; width: auto;"> |
+| Motion Tracking Example (30k) | <img src="data/demo/tracking.gif" alt="30k" style="max-height: 200px; width: auto;"> |
 
 ### Dataset Preparation
 
