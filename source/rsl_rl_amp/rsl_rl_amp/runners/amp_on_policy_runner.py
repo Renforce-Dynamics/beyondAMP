@@ -150,6 +150,8 @@ class AMPOnPolicyRunner:
                         # Book keeping
                         if 'episode' in infos:
                             ep_infos.append(infos['episode'])
+                        if 'log' in infos:
+                            ep_infos.append(infos['episode'])
                         cur_reward_sum += rewards
                         cur_episode_length += 1
                         new_ids = (dones > 0).nonzero(as_tuple=False)

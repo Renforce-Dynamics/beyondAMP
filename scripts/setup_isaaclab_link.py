@@ -32,7 +32,7 @@ def create_symlink(target: Path, link_dir: Path):
 
 modules = [
     "./source/robotlib",
-    "./source/rsl_rl",
+    "./source/rsl_rl_amp",
     "./source/amp_tasks",
     "./source/beyondMimic",
     "./source/beyondAMP",

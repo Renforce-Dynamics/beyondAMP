@@ -19,7 +19,7 @@ settings_path = os.path.join(repo_dir, ".vscode", "settings.json")
 # Relative source paths to include (relative to this script)
 relative_extra_paths = [
     "./source/robotlib",
-    "./source/rsl_rl",
+    "./source/rsl_rl_amp",
     "./source/amp_tasks",
     "./source/beyondMimic",
     "./source/beyondAMP",

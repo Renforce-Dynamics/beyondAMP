@@ -45,7 +45,7 @@ clone_repo git@github.com:Renforce-Dynamics/robotlib.git ./source/robotlib
 
 modules=(
     "./source/robotlib"
-    "./source/rsl_rl"
+    "./source/rsl_rl_amp"
     "./source/amp_tasks"
     "./source/beyondMimic"
     "./source/beyondAMP"
