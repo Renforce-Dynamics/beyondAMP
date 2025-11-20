@@ -41,11 +41,6 @@ scripts/factoryIsaac/train.py --task AMPG1 --headless
 scripts/factoryIsaac/play.py --headless --target <path to your ckpt.pt> --video --num_envs 32
 ```
 
-| Description | Video |
-| :--- | :--- |
-| AMP Training Preview (3k) | <img src="data/demo/amp.gif" alt="3k" style="max-height: 200px; width: auto;"> |
-| Motion Tracking Example (30k) | <img src="data/demo/tracking.gif" alt="30k" style="max-height: 200px; width: auto;"> |
-
 -----
 
 ### 数据集准备 (Dataset Preparation) 💾

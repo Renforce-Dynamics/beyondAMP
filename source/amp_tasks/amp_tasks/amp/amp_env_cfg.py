@@ -21,7 +21,7 @@ from isaaclab.terrains import TerrainImporterCfg
 from isaaclab.utils import configclass
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
-from beyondAMP.amp_obs import AMPObsBaiscCfg
+from beyondAMP.amp_obs_grp import AMPObsBaiscCfg
 
 import beyondMimic.mdp as mdp
 
