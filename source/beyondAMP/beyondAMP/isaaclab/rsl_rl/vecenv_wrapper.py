@@ -29,7 +29,7 @@ class RslRlVecEnvWrapper(VecEnv):
         https://github.com/leggedrobotics/rsl_rl/blob/master/rsl_rl/env/vec_env.py
     """
 
-    def __init__(self, env: ManagerBasedRLEnv | DirectRLEnv, clip_actions: float | None = None):
+    def __init__(self, env: ManagerBasedRLEnv | DirectRLEnv, clip_actions: float | None = None, **kwargs):
         """Initializes the wrapper.
 
         Note:

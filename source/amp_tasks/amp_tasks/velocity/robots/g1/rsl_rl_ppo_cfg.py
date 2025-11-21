@@ -7,9 +7,9 @@ from isaaclab.utils import configclass
 from beyondAMP.isaaclab.rsl_rl.configs.rl_cfg import RslRlOnPolicyRunnerCfg, RslRlPpoActorCriticCfg, RslRlPpoAlgorithmCfg
 from beyondAMP.isaaclab.rsl_rl.configs.amp_cfg import MotionDatasetCfg, AMPObsBaiscCfg, AMPPPOAlgorithmCfg, AMPRunnerCfg
 
-from .config import g1_key_body_names
+from .config import g1_key_body_names, g1_anchor_name
 
-from beyondAMP.amp_obs_grp import AMPObsBaiscTerms
+from beyondAMP.obs_groups import AMPObsBaiscTerms
 
 @configclass
 class BasePPORunnerCfg(RslRlOnPolicyRunnerCfg):
@@ -75,7 +75,8 @@ class G1FlatAMPRunnerCfg(AMPRunnerCfg):
             "data/datasets/MocapG1Full/LAFAN/walk1_subject1.npz",
         ],
         body_names = g1_key_body_names,
-        amp_obs_terms = AMPObsBaiscTerms
+        amp_obs_terms = AMPObsBaiscTerms,
+        anchor_name=g1_anchor_name
     )
     amp_discr_hidden_dims = [256, 256]
     amp_reward_coef = 0.5

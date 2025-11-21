@@ -14,3 +14,5 @@ g1_key_body_names = [
     "right_elbow_link",
     "right_wrist_yaw_link",
 ]
+
+g1_anchor_name = "torso_link"

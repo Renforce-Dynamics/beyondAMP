@@ -29,7 +29,7 @@ BeyondAMP extends this system with clean Isaac Lab wrappers and flexible observa
 ### 2.1 AMP Observation Groups
 
 BeyondAMP provides several pre-defined AMP observation groups in  
-`source/beyondAMP/beyondAMP/amp_obs_grp.py`.
+`source/beyondAMP/beyondAMP/obs_groups.py`.
 
 Example:
 
@@ -85,7 +85,19 @@ class G1FlatEnvBasicCfg(G1FlatEnvCfg):
 
 Once attached, the environment will automatically produce AMP observations at every step.
 
----
+For body tracking terms, please ensure your amp body names consistent with dataset names: 
+
+```
+@configclass
+class G1FlatEnvSoftTrackCfg(G1FlatEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.observations.amp = \
+            AMPObsSoftTrackCfg().adjust_key_body_indexes(
+                ["body_quat_w", "body_lin_vel_w", "body_ang_vel_w"],
+                g1_key_body_names
+                )
+```
 
 ## 4. AMP Training Configuration
 

@@ -2,7 +2,7 @@ from typing import List
 from isaaclab.utils import configclass
 from .rl_cfg import RslRlOnPolicyRunnerCfg, RslRlPpoActorCriticCfg, RslRlPpoAlgorithmCfg
 
-from beyondAMP.amp_obs_grp import AMPObsBaiscCfg
+from beyondAMP.obs_groups import AMPObsBaiscCfg
 from rsl_rl_amp.runners.amp_on_policy_runner import AMPOnPolicyRunner
 from beyondAMP.motion.motion_dataset import MotionDatasetCfg
 from dataclasses import MISSING

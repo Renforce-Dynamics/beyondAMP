@@ -71,14 +71,11 @@ class AMPOnPolicyRunner:
                                                         num_actions=self.env.num_actions,
                                                         **self.policy_cfg).to(self.device)
 
-        amp_data = MotionDataset.from_cfg(
-            cfg=self.amp_data_cfg,
-            env=env.unwrapped,
-            device=device
-            )
-        amp_normalizer = Normalizer(amp_data.observation_dim)
+        amp_data = env.motion_dataset
+        amp_obs_dim = env.get_amp_observations().shape[-1] # amp_data.observation_dim
+        amp_normalizer = Normalizer(amp_obs_dim)
         discriminator = AMPDiscriminator(
-            amp_data.observation_dim * 2,
+            amp_obs_dim * 2,
             train_cfg['amp_reward_coef'],
             train_cfg['amp_discr_hidden_dims'], device,
             train_cfg['amp_task_reward_lerp']).to(self.device)

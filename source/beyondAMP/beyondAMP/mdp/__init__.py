@@ -3,4 +3,5 @@
 #         base_pos_z, body_pose_w
 
 from isaaclab_tasks.manager_based.locomotion.velocity.mdp import *
-from .observation import *
+from .observations import *
+from .events import *

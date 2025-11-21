@@ -1,11 +1,17 @@
 import torch
 from .vecenv_wrapper import RslRlVecEnvWrapper
-
+from beyondAMP.motion.motion_dataset import MotionDataset
 
 class AMPEnvWrapper(RslRlVecEnvWrapper):
     def __init__(self, env, clip_actions = None, *, motion_dataset=None):
         super().__init__(env, clip_actions)
         self.rewards_shape = self.unwrapped.reward_manager._step_reward.shape[-1]
+        if isinstance(motion_dataset, MotionDataset) or motion_dataset is None:
+            self.motion_dataset = motion_dataset
+        else:
+            self.motion_dataset = MotionDataset(motion_dataset, env.unwrapped, env.unwrapped.device)
+            
+        self.unwrapped.motion_dataset = self.motion_dataset
     
     def get_observations(self) -> tuple[torch.Tensor, dict]:
         """Returns the current observations of the environment."""

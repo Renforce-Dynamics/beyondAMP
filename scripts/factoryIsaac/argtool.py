@@ -144,12 +144,13 @@ def load_cfgs(args_cli, modified=False):
 def prepare_wrapper(env, args_cli, agent_cfg) -> Tuple[RslRlVecEnvWrapper, callable, dict]:
     print("Using main branch.")
     from beyondAMP.isaaclab.rsl_rl import AMPEnvWrapper
-    env = AMPEnvWrapper(env)
+
+    env = AMPEnvWrapper(env, motion_dataset=getattr(agent_cfg, "amp_data", None))
     learn_cfg = {
         "num_learning_iterations": agent_cfg.max_iterations,
         "init_at_random_ep_len": True
     }
-
+    
     if hasattr(agent_cfg, "runner_type"):
         func_runner = agent_cfg.runner_type
         if not callable(func_runner):
@@ -164,4 +165,4 @@ def prepare_wrapper(env, args_cli, agent_cfg) -> Tuple[RslRlVecEnvWrapper, calla
 def dump_pickle(fpath, obj):
     with open(fpath, "wb") as f:
         pickle.dump(obj, f)        
-    
+

@@ -21,9 +21,9 @@ from isaaclab.terrains import TerrainImporterCfg
 from isaaclab.utils import configclass
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
-from beyondAMP.amp_obs_grp import AMPObsBaiscCfg
+from beyondAMP.obs_groups import AMPObsBaiscCfg
 
-import beyondMimic.mdp as mdp
+import beyondAMP.mdp as mdp
 
 ##
 # Scene definition
@@ -134,16 +134,6 @@ class EventCfg:
         },
     )
 
-    add_joint_default_pos = EventTerm(
-        func=mdp.randomize_joint_default_pos,
-        mode="startup",
-        params={
-            "asset_cfg": SceneEntityCfg("robot", joint_names=[".*"]),
-            "pos_distribution_params": (-0.01, 0.01),
-            "operation": "add",
-        },
-    )
-
     base_com = EventTerm(
         func=mdp.randomize_rigid_body_com,
         mode="startup",
@@ -153,8 +143,8 @@ class EventCfg:
         },
     )
 
-    reset_base = EventTerm(
-        func=mdp.reset_root_state_uniform,
+    reset_to_ref_motion_dataset = EventTerm(
+        func=mdp.reset_to_ref_motion_dataset,
         mode="reset",
         params={
             "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (0, 0)},
@@ -166,15 +156,8 @@ class EventCfg:
                 "pitch": (-0.5, 0.5),
                 "yaw": (-0.5, 0.5),
             },
-        },
-    )
-
-    reset_robot_joints = EventTerm(
-        func=mdp.reset_joints_by_scale,
-        mode="reset",
-        params={
-            "position_range": (0.5, 1.5),
-            "velocity_range": (0.0, 0.0),
+            "joint_position_range": (0.0, 0.3),
+            "joint_velocity_range": (0.0, 0.0),
         },
     )
 

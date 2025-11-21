@@ -2,7 +2,7 @@
 from isaaclab.utils import configclass
 from .velocity_env_cfg import RobotEnvCfg
 
-from beyondAMP.amp_obs_grp import AMPObsBaiscCfg, AMPObsSoftTrackCfg, AMPObsHardTrackCfg
+from beyondAMP.obs_groups import AMPObsBaiscCfg, AMPObsBodySoftTrackCfg, AMPObsBodyHardTrackCfg
 
 
 @configclass

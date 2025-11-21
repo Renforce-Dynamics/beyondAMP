@@ -8,27 +8,27 @@ from isaaclab.managers import ObservationTermCfg as ObsTerm
 
 import beyondAMP.mdp as mdp
 
+from .amp_obs_base import AMPObsBaseCfg
 
-@configclass
-class AMPObsGrpCfg(ObsGroup):
-    def adjust_key_body_indexes(self, terms:list, key_bodys:list):
-        for term_name in terms:
-            term:ObsTerm = getattr(self, term_name)
-            if "asset_cfg" in term.params:
-                term.params["asset_cfg"].body_names = key_bodys
-            else:
-                term.params["asset_cfg"] = SceneEntityCfg(name="robot", body_names=key_bodys)
-        return self
-
-@configclass
-class AMPObsBaiscCfg(AMPObsGrpCfg):
-    joint_pos = ObsTerm(func=mdp.joint_pos_rel)
-    joint_vel = ObsTerm(func=mdp.joint_vel_rel)
+# Terms with only body reference motion
     
-AMPObsBaiscTerms = ["joint_pos", "joint_vel"]
+"""
+Example
+```
+@configclass
+class G1FlatEnvSoftTrackCfg(G1FlatEnvCfg):
+    def __post_init__(self):
+        super().__post_init__()
+        self.observations.amp = \
+            AMPObsSoftTrackCfg().adjust_key_body_indexes(
+                ["body_quat_w", "body_lin_vel_w", "body_ang_vel_w"],
+                g1_key_body_names
+                )
+```
+"""
     
 @configclass
-class AMPObsSoftTrackCfg(AMPObsGrpCfg):
+class AMPObsBodySoftTrackCfg(AMPObsBaseCfg):
     joint_pos = ObsTerm(func=mdp.joint_pos_rel)
     joint_vel = ObsTerm(func=mdp.joint_vel_rel)
     body_quat_w = ObsTerm(func=mdp.body_quat_w)
@@ -38,10 +38,10 @@ class AMPObsSoftTrackCfg(AMPObsGrpCfg):
 AMPObsSoftTrackTerms = ["joint_pos", "joint_vel", "body_quat_w", "body_lin_vel_w", "body_ang_vel_w"]
 
 @configclass
-class AMPObsHardTrackCfg(AMPObsGrpCfg):
+class AMPObsBodyHardTrackCfg(AMPObsBaseCfg):
     joint_pos = ObsTerm(func=mdp.joint_pos_rel)
     joint_vel = ObsTerm(func=mdp.joint_vel_rel)
-    body_pos_w = ObsTerm(func=mdp.body_pose_w)
+    body_pos_w = ObsTerm(func=mdp.body_pos_w)
     body_quat_w = ObsTerm(func=mdp.body_quat_w)
     body_lin_vel_w = ObsTerm(func=mdp.body_lin_vel_w)
     body_ang_vel_w = ObsTerm(func=mdp.body_ang_vel_w)

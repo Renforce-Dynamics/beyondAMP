@@ -4,10 +4,11 @@ import os
 import numpy as np
 import torch
 from typing import Sequence, List, Union
-from beyondAMP.amp_obs_grp import AMPObsBaiscCfg
+# from beyondAMP.obs_groups import AMPObsBaiscCfg
 
 from isaaclab.utils import configclass
 from dataclasses import MISSING
+from .motion_transition import MotionTransition
 
 class MotionDataset:
     """
@@ -17,15 +18,31 @@ class MotionDataset:
 
     def __init__(
         self, 
-        motion_files: Sequence[str], 
-        body_indexes: Sequence[str], 
-        amp_obs_terms: List[str],
+        cfg: MotionDatasetCfg,
+        env,
         device: str = "cpu",
         ):
+        self.cfg = cfg
+        self.env = env
         self.device = device
-        self.body_indexes = torch.tensor(body_indexes, dtype=torch.long)
-        self.observation_terms = amp_obs_terms
+        self.robot = env.scene[cfg.asset_name]
+        self.motion_files = cfg.motion_files
+        self.observation_terms = cfg.amp_obs_terms
+        
+        body_names = cfg.body_names
+        self.body_indexes = torch.tensor(
+            self.robot.find_bodies(body_names, preserve_order=True)[0], dtype=torch.long, device=device
+        )
 
+        anchor_name = cfg.anchor_name
+        self.anchor_index = torch.tensor(
+            self.robot.find_bodies(anchor_name, preserve_order=True)[0], dtype=torch.long, device=device
+        )
+        
+        self.load_motions()
+        self.init_observation_dims()
+
+    def load_motions(self):
         # Storage lists (later concatenated)
         joint_pos_list = []
         joint_vel_list = []
@@ -37,7 +54,7 @@ class MotionDataset:
         traj_lengths = []
 
         # Load all motion files
-        for f in motion_files:
+        for f in self.motion_files:
             assert os.path.isfile(f), f"Invalid motion file: {f}"
             data = np.load(f)
 
@@ -53,51 +70,60 @@ class MotionDataset:
             body_ang_vel_w_list.append(torch.tensor(data["body_ang_vel_w"], dtype=torch.float32))
 
         # Concatenate all trajectories into single big tensors
-        self.joint_pos = torch.cat(joint_pos_list, dim=0).to(device)
-        self.joint_vel = torch.cat(joint_vel_list, dim=0).to(device)
-        body_pos_w_all = torch.cat(body_pos_w_list, dim=0).to(device)
-        body_quat_w_all = torch.cat(body_quat_w_list, dim=0).to(device)
-        body_lin_vel_w_all = torch.cat(body_lin_vel_w_list, dim=0).to(device)
-        body_ang_vel_w_all = torch.cat(body_ang_vel_w_list, dim=0).to(device)
+        self.joint_pos      = torch.cat(joint_pos_list, dim=0).to(self.device)
+        self.joint_vel      = torch.cat(joint_vel_list, dim=0).to(self.device)
+        self.body_pos_w_all      = torch.cat(body_pos_w_list, dim=0).to(self.device)
+        self.body_quat_w_all     = torch.cat(body_quat_w_list, dim=0).to(self.device)
+        self.body_lin_vel_w_all  = torch.cat(body_lin_vel_w_list, dim=0).to(self.device)
+        self.body_ang_vel_w_all  = torch.cat(body_ang_vel_w_list, dim=0).to(self.device)
 
         self.total_dataset_size = sum(traj_lengths)
-        
-        def subtract_flaten(target: torch.Tensor):
-            target = target[:, self.body_indexes]
-            return target.reshape(self.total_dataset_size, -1)
-        self.body_pos_w      = subtract_flaten(body_pos_w_all)
-        self.body_quat_w     = subtract_flaten(body_quat_w_all)
-        self.body_lin_vel_w  = subtract_flaten(body_lin_vel_w_all)
-        self.body_ang_vel_w  = subtract_flaten(body_ang_vel_w_all)
 
         # Keep per-trajectory FPS if needed
         self.fps_list = fps_list
 
         # Build transition index list: (global_index_t, global_index_t+1)
-        self.index_t, self.index_tp1 = self._build_transition_indices(traj_lengths, device)
-        self.init_observation_dims()
+        self.index_t, self.index_tp1 = self._build_transition_indices(traj_lengths, self.device)
+
+    # ----------------------- Property API -----------------------
+    
+    def subtract_flaten(self, target: torch.Tensor):
+        target = target[:, self.body_indexes]
+        return target.reshape(self.total_dataset_size, -1)
+    
+    @property
+    def body_pos_w(self):
+        return self.body_pos_w_all[:, self.body_indexes].reshape(self.total_dataset_size, -1)
+    @property
+    def body_quat_w(self):
+        return self.body_quat_w_all[:, self.body_indexes].reshape(self.total_dataset_size, -1)
+    @property
+    def body_lin_vel_w(self):
+        return self.body_lin_vel_w_all[:, self.body_indexes].reshape(self.total_dataset_size, -1)
+    @property
+    def body_ang_vel_w(self):
+        return self.body_ang_vel_w_all[:, self.body_indexes].reshape(self.total_dataset_size, -1)
+    
+    @property
+    def anchor_pos_w(self):
+        return self.body_pos_w_all[:, self.anchor_index].reshape(self.total_dataset_size, -1)
+    @property
+    def anchor_quat_w(self):
+        return self.body_quat_w_all[:, self.anchor_index].reshape(self.total_dataset_size, -1)
+    @property
+    def anchor_lin_vel_w(self):
+        return self.body_lin_vel_w_all[:, self.anchor_index].reshape(self.total_dataset_size, -1)
+    @property
+    def anchor_ang_vel_w(self):
+        return self.body_ang_vel_w_all[:, self.anchor_index].reshape(self.total_dataset_size, -1)
+        
 
     # ----------------------- Transition index builder -----------------------
 
-    @classmethod
-    def from_cfg(cls, cfg: dict, env, device):
-        body_names = cfg["body_names"]
-        robot = env.scene[cfg["asset_name"]]
-        body_indexes = torch.tensor(
-            robot.find_bodies(body_names, preserve_order=True)[0], dtype=torch.long, device=device
-        )
-        obj = cls(
-            motion_files  = cfg["motion_files"],
-            body_indexes  = body_indexes,
-            amp_obs_terms = cfg["amp_obs_terms"],
-            device        = device
-            )
-        return obj
-
     def observation_dim_cast(self, name)->int:
-        shape_cast_table = {
-            "displacement": self.body_indexes.shape[-1]
-        }
+        # shape_cast_table = {
+        #     "displacement": self.body_indexes.shape[-1]
+        # }
         if hasattr(self, name):
             obs_term: torch.Tensor = getattr(self, name)
             assert isinstance(obs_term, torch.Tensor), f"invalid observation name: {name} for get dim"
@@ -153,30 +179,22 @@ class MotionDataset:
         idx = torch.randint(0, len(self.index_t), (batch_size,), device=self.device)
         t = self.index_t[idx]
         tp1 = self.index_tp1[idx]
-
-        return {
-            "joint_pos": (self.joint_pos[t],  self.joint_pos[tp1]),
-            "joint_vel": (self.joint_vel[t], self.joint_vel[tp1]),
-            "body_pos_w":  (self.body_pos_w[t], self.body_pos_w[tp1]),
-            "body_quat_w": (self.body_quat_w[t], self.body_quat_w[tp1]),
-            "body_lin_vel_w": (self.body_lin_vel_w[t], self.body_lin_vel_w[tp1]),
-            "body_ang_vel_w": (self.body_ang_vel_w[t], self.body_ang_vel_w[tp1]),
-        }
+        return t, tp1
 
     def feed_forward_generator(self, num_mini_batch, mini_batch_size):
         for idx in range(0, num_mini_batch):
-            sample = self.sample_batch(mini_batch_size)
-            t1, tp1 = [], []
+            res_t, res_tp1 = [], []
+            t, tp1 = self.sample_batch(mini_batch_size)
             for term in self.observation_terms:
-                _t1, _tp1 = sample[term]
-                t1.append(_t1); tp1.append(_tp1)
-            t1, tp1 = torch.cat(t1, dim=-1), torch.cat(tp1, dim=-1)
-            yield t1, tp1
-            
-            
+                _t, _tp1 = getattr(self, term)[t], getattr(self, term)[tp1]
+                res_t.append(_t); res_tp1.append(_tp1)
+            res_t, res_tp1 = torch.cat(res_t, dim=-1), torch.cat(res_tp1, dim=-1)
+            yield res_t, res_tp1
+
 @configclass
 class MotionDatasetCfg:
-    asset_name: str = "robot"
-    motion_files: List[str] = MISSING
-    body_names: List[str] = MISSING
-    amp_obs_terms:  List[str] = ["joint_pos", "joint_vel"]
+    asset_name:    str = "robot"
+    motion_files:  List[str] = MISSING
+    body_names:    List[str] = MISSING
+    amp_obs_terms: List[str] = MISSING
+    anchor_name:   str = MISSING

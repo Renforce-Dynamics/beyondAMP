@@ -3,9 +3,9 @@ from beyondAMP.isaaclab.rsl_rl.configs.rl_cfg import RslRlOnPolicyRunnerCfg, Rsl
 
 from beyondAMP.isaaclab.rsl_rl.configs.amp_cfg import MotionDatasetCfg, AMPObsBaiscCfg, AMPPPOAlgorithmCfg, AMPRunnerCfg
 
-from beyondAMP.amp_obs_grp import AMPObsBaiscTerms, AMPObsSoftTrackTerms, AMPObsHardTrackTerms
+from beyondAMP.obs_groups import AMPObsBaiscTerms, AMPObsSoftTrackTerms, AMPObsHardTrackTerms
 
-from .config import g1_key_body_names
+from .config import g1_key_body_names, g1_anchor_name
 
 @configclass
 class G1FlatPPORunnerCfg(RslRlOnPolicyRunnerCfg):
@@ -68,7 +68,8 @@ class G1FlatAMPRunnerCfg(AMPRunnerCfg):
             "data/demo/punch_000.npz"
         ],
         body_names = g1_key_body_names,
-        amp_obs_terms = None
+        anchor_name = g1_anchor_name,
+        amp_obs_terms = None,
     )
     amp_discr_hidden_dims = [256, 256]
     amp_reward_coef = 0.5
@@ -93,17 +94,6 @@ class G1FlatAMPSoftTrackCfg(G1FlatAMPRunnerCfg):
         self.run_name = "soft_track"
         self.amp_data.motion_files = [
             "data/datasets/MocapG1Full/LAFAN/walk1_subject1.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk1_subject2.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk1_subject5.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk2_subject1.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk2_subject3.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk2_subject4.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk3_subject1.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk3_subject2.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk3_subject3.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk3_subject4.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk3_subject5.npz",
-            "data/datasets/MocapG1Full/LAFAN/walk4_subject1.npz",
         ]
 
 @configclass
