@@ -59,9 +59,8 @@ from isaaclab.utils.dict import print_dict
 # Import extensions to set up environment tasks
 from isaaclab_tasks.utils.parse_cfg import load_cfg_from_registry
 
-from isaaclab_rl.rsl_rl import export_policy_as_onnx, export_policy_as_jit
-
 from rsl_rl_amp.runners import OnPolicyRunner
+from beyondAMP.isaaclab.exporter import export_policy_as_jit, export_policy_as_onnx
 
 def main():
     """Play with RSL-RL agent. base branch"""
@@ -110,10 +109,11 @@ def main():
         asset_name = "robot",
     )
     
+    env_cfg.curriculum = None
     # if args_cli.determine:
     #     set_determine_reset(env_cfg)
     
-    # env_cfg.commands.base_velocity.ranges.lin_vel_x = (-0.8, -0.8)
+    env_cfg.commands.base_velocity.ranges.lin_vel_x = (0.3, 0.8)
     # env_cfg.commands.base_velocity.ranges.lin_vel_y = (0.0, 0.0)
     # env_cfg.commands.base_velocity.ranges.ang_vel_z = (0.0, 0.0)
     
@@ -153,7 +153,6 @@ def main():
 
     # reset environment
     obs = env.get_observations()
-    # obs = env.get_observations()
 
     # export policy
     export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
