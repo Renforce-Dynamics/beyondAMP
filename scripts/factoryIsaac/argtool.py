@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Tuple
 if TYPE_CHECKING:
     from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper
 
-
 def add_rsl_rl_args(parser: argparse.ArgumentParser):
     """Add RSL-RL arguments to the parser.
 
@@ -166,24 +165,3 @@ def dump_pickle(fpath, obj):
     with open(fpath, "wb") as f:
         pickle.dump(obj, f)        
     
-import torch, os
-
-class InferencePolicy(torch.nn.Module):
-    def __init__(self, actor_critic, obs_normalizer=None):
-        super().__init__()
-        self.actor_critic = actor_critic
-        self.obs_normalizer = obs_normalizer
-
-    def forward(self, obs):
-        if self.obs_normalizer is not None:
-            obs = self.obs_normalizer(obs)
-        return self.actor_critic.act_inference(obs)
-
-def export_policy_as_jit(runner, export_dir, filename="policy.pt", device="cpu"):
-    os.makedirs(export_dir, exist_ok=True)
-    actor = runner.alg.actor_critic.to(device).eval()
-    obs_norm = runner.obs_normalizer.to(device) if runner.cfg.get("empirical_normalization") else None
-    policy = InferencePolicy(actor, obs_norm).to(device).eval()
-    example_input = torch.randn(1, *actor.obs_shape).to(device)
-    traced = torch.jit.trace(policy, example_input)
-    torch.jit.save(traced, os.path.join(export_dir, filename))
