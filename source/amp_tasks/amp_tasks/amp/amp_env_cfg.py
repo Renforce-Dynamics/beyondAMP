@@ -147,16 +147,16 @@ class EventCfg:
         func=mdp.reset_to_ref_motion_dataset,
         mode="reset",
         params={
-            "pose_range": {"x": (-0.5, 0.5), "y": (-0.5, 0.5), "yaw": (0, 0)},
+            "pose_range": {"x": (0.0, 0.0), "y": (0.0, 0.0), "yaw": (0, 0)},
             "velocity_range": {
-                "x": (-0.5, 0.5),
-                "y": (-0.5, 0.5),
-                "z": (-0.5, 0.5),
-                "roll": (-0.5, 0.5),
-                "pitch": (-0.5, 0.5),
-                "yaw": (-0.5, 0.5),
+                "x": (0.0, 0.0),
+                "y": (0.0, 0.0),
+                "z": (0.0, 0.0),
+                "roll": (0.0, 0.0),
+                "pitch": (0.0, 0.0),
+                "yaw": (0.0, 0.0),
             },
-            "joint_position_range": (0.0, 0.3),
+            "joint_position_range": (0.0, 0.0),
             "joint_velocity_range": (0.0, 0.0),
         },
     )
@@ -196,15 +196,15 @@ class RewardsCfg:
 @configclass
 class TerminationsCfg:
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
-    base_contact = DoneTerm(
-        func=mdp.illegal_contact,
-        params={"sensor_cfg": SceneEntityCfg(
-            "contact_forces", 
-            body_names="torso_link"
-        ), "threshold": 1.0},
-    )
+    # base_contact = DoneTerm(
+    #     func=mdp.illegal_contact,
+    #     params={"sensor_cfg": SceneEntityCfg(
+    #         "contact_forces", 
+    #         body_names="torso_link"
+    #     ), "threshold": 1.0},
+    # )
     base_height = DoneTerm(func=mdp.root_height_below_minimum, params={"minimum_height": 0.2})
-    bad_orientation = DoneTerm(func=mdp.bad_orientation, params={"limit_angle": 0.8})
+    # bad_orientation = DoneTerm(func=mdp.bad_orientation, params={"limit_angle": 0.8})
 
 
 @configclass

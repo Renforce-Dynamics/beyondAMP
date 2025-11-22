@@ -16,7 +16,7 @@ def body_pos_w(
     asset_cfg:SceneEntityCfg=SceneEntityCfg("robot")
 ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
-    body_pos_w = asset.data.body_pos_w[:, asset_cfg.body_ids]
+    body_pos_w = asset.data.body_pos_w[:, asset_cfg.body_ids] - env.scene.env_origins.unsqueeze(1)
     return body_pos_w.reshape(env.num_envs, -1)
 
 def body_quat_w(

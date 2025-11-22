@@ -38,7 +38,7 @@ class G1FlatPPORunnerCfg(RslRlOnPolicyRunnerCfg):
 @configclass
 class G1FlatAMPRunnerCfg(AMPRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 5000
+    max_iterations = 10000
     save_interval = 500
     experiment_name = "g1_flat"
     empirical_normalization = True
@@ -102,3 +102,6 @@ class G1FlatAMPHardTrackCfg(G1FlatAMPRunnerCfg):
         super().__post_init__()
         self.amp_data.amp_obs_terms = AMPObsHardTrackTerms
         self.run_name = "hard_track"
+        self.amp_data.motion_files = [
+            "data/datasets/MocapG1Full/LAFAN/sprint1_subject2.npz"
+        ]
