@@ -7,7 +7,7 @@ from isaaclab.utils import configclass
 from beyondAMP.isaaclab.rsl_rl.configs.rl_cfg import RslRlOnPolicyRunnerCfg, RslRlPpoActorCriticCfg, RslRlPpoAlgorithmCfg
 from beyondAMP.isaaclab.rsl_rl.configs.amp_cfg import MotionDatasetCfg, AMPObsBaiscCfg, AMPPPOAlgorithmCfg, AMPRunnerCfg
 
-from .config import g1_key_body_names, g1_anchor_name
+from robotlib.robot_keys.g1_29d import g1_key_body_names, g1_anchor_name
 
 from beyondAMP.obs_groups import AMPObsBaiscTerms
 

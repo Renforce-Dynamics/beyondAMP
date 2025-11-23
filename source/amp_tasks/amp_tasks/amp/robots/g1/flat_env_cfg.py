@@ -5,7 +5,7 @@ from ...amp_env_cfg import AMPEnvCfg
 
 from beyondAMP.obs_groups import AMPObsBaiscCfg, AMPObsBodySoftTrackCfg, AMPObsBodyHardTrackCfg
 from beyondAMP.obs_groups import AMPObsBaiscTerms, AMPObsSoftTrackTerms, AMPObsHardTrackTerms
-from .config import g1_key_body_names
+from robotlib.robot_keys.g1_29d import g1_key_body_names
 
 @configclass
 class G1FlatEnvCfg(AMPEnvCfg):

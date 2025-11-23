@@ -3,6 +3,10 @@ from isaaclab.utils import configclass
 from robotlib.beyondMimic.robots.g1 import G1_ACTION_SCALE, G1_CYLINDER_CFG
 from ...tracking_env_cfg import TrackingEnvCfg
 
+from beyondAMP.obs_groups import AMPObsBaiscCfg, AMPObsBodySoftTrackCfg, AMPObsBodyHardTrackCfg
+from beyondAMP.obs_groups import AMPObsBaiscTerms, AMPObsSoftTrackTerms, AMPObsHardTrackTerms
+
+from robotlib.robot_keys.g1_29d import g1_key_body_names, g1_anchor_name
 
 @configclass
 class G1FlatEnvCfg(TrackingEnvCfg):
@@ -31,20 +35,16 @@ class G1FlatEnvCfg(TrackingEnvCfg):
         # self.observations.policy.projected_gravity = None
         self.commands.motion.debug_vis = False
         self.commands.motion.motion_file = "data/datasets/MocapG1Full/LAFAN/walk1_subject1.npz"
-
-@configclass
-class G1FlatNoRelaEnvCfg(G1FlatEnvCfg):
-    def __post_init__(self):
-        super().__post_init__()
+        
         self.observations.policy.motion_anchor_pos_b = None
         self.observations.policy.motion_anchor_ori_b = None # using gravity instead
-        self.observations.policy.base_lin_vel = None
 
 @configclass
-class G1FlatWoStateEstimationEnvCfg(G1FlatEnvCfg):
+class G1AMPTrackFlatEnvCfg(G1FlatEnvCfg):
     def __post_init__(self):
         super().__post_init__()
-        self.observations.policy.projected_gravity = None
-        self.observations.policy.motion_anchor_pos_b = None
-        self.observations.policy.base_lin_vel = None
-        
+        self.observations.amp = AMPObsBodyHardTrackCfg().adjust_key_body_indexes(
+                [ "body_pos_w", "body_quat_w", "body_lin_vel_w", "body_ang_vel_w"],
+                g1_key_body_names
+                )
+        self.observations.policy.command = None
