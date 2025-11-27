@@ -1,14 +1,18 @@
 from isaaclab.utils import configclass
 from beyondAMP.isaaclab.rsl_rl.configs.rl_cfg import RslRlOnPolicyRunnerCfg, RslRlPpoActorCriticCfg, RslRlPpoAlgorithmCfg
+
 from beyondAMP.isaaclab.rsl_rl.configs.amp_cfg import MotionDatasetCfg, AMPObsBaiscCfg, AMPPPOAlgorithmCfg, AMPRunnerCfg
+
+from beyondAMP.obs_groups import AMPObsBaiscTerms, AMPObsSoftTrackTerms, AMPObsHardTrackTerms
+
+from robotlib.robot_keys.g1_29d import g1_key_body_names, g1_anchor_name
 
 @configclass
 class G1FlatPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
     max_iterations = 30000
     save_interval = 500
-    experiment_name = "g1_track"
-    run_name = "origin"
+    experiment_name = "g1_flat"
     empirical_normalization = True
     policy = RslRlPpoActorCriticCfg(
         init_noise_std=1.0,
@@ -32,21 +36,11 @@ class G1FlatPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     )
 
 @configclass
-class G1FlatWoStateEstimationPPORunnerCfg(G1FlatPPORunnerCfg):
-    run_name = "origin_wo"
-    def __post_init__(self):
-        super().__post_init__()
-
-from robotlib.robot_keys.g1_29d import g1_key_body_names, g1_anchor_name
-from beyondAMP.obs_groups import AMPObsBaiscTerms, AMPObsSoftTrackTerms, AMPObsHardTrackTerms
-from amp_tasks import amp_task_demo_data_cfg
-
-@configclass
 class G1FlatAMPRunnerCfg(AMPRunnerCfg):
     num_steps_per_env = 24
     max_iterations = 10000
     save_interval = 500
-    experiment_name = "g1_track"
+    experiment_name = "g1_flat"
     empirical_normalization = True
     policy = RslRlPpoActorCriticCfg(
         init_noise_std=1.0,
@@ -70,18 +64,24 @@ class G1FlatAMPRunnerCfg(AMPRunnerCfg):
         max_grad_norm=1.0,
     )
     amp_data = MotionDatasetCfg(
-        motion_files=[],
+        motion_files=[
+            "data/demo/punch_000.npz"
+        ],
         body_names = g1_key_body_names,
         anchor_name = g1_anchor_name,
         amp_obs_terms = None,
     )
     amp_discr_hidden_dims = [256, 256]
-    amp_reward_coef = 0.5
-    amp_task_reward_lerp = 0.7
+    amp_reward_coef = 1.0
+    amp_task_reward_lerp = 0.05
 
-class G1FlatAMPHardTrackCfg(G1FlatAMPRunnerCfg):
+
+@configclass
+class G1FlatAMPSoftTrackCfg(G1FlatAMPRunnerCfg):
     def __post_init__(self):
         super().__post_init__()
-        self.amp_data.amp_obs_terms = AMPObsHardTrackTerms
-        self.run_name = "amp_hard"
-        self.amp_data.motion_files = [amp_task_demo_data_cfg.soccer_shoot_file]
+        self.amp_data.amp_obs_terms = AMPObsSoftTrackTerms
+        self.run_name = "soft_track"
+        self.amp_task_reward_lerp = 0.5
+        self.amp_reward_coef = 0.4
+        self.amp_data.motion_files = ["data/demo/like_a_dog.npz"]
