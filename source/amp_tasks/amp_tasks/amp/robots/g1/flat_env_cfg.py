@@ -27,6 +27,7 @@ class G1FlatEnvSoftTrackCfg(G1FlatEnvCfg):
         super().__post_init__()
         self.observations.amp = \
             AMPObsBodySoftTrackCfg().adjust_key_body_indexes(
+                # ["body_lin_vel_w"],
                 ["body_quat_w", "body_lin_vel_w", "body_ang_vel_w"],
                 g1_key_body_names
                 )

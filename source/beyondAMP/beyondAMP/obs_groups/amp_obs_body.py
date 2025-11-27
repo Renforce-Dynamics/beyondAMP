@@ -35,6 +35,7 @@ class AMPObsBodySoftTrackCfg(AMPObsBaseCfg):
     body_lin_vel_w = ObsTerm(func=mdp.body_lin_vel_w)
     body_ang_vel_w = ObsTerm(func=mdp.body_ang_vel_w)
 
+# AMPObsSoftTrackTerms = ["joint_pos", "joint_vel", "body_lin_vel_w"]
 AMPObsSoftTrackTerms = ["joint_pos", "joint_vel", "body_quat_w", "body_lin_vel_w", "body_ang_vel_w"]
 
 @configclass

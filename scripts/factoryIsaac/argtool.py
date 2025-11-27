@@ -49,6 +49,8 @@ def parse_rsl_rl_cfg(task_name: str, args_cli: argparse.Namespace, rsl_rl_cfg=No
         rsl_rl_cfg = load_cfg_from_registry(task_name, "rsl_rl_cfg_entry_point")
 
     # override the default configuration with CLI arguments
+    if args_cli.experiment_name is not None:
+        rsl_rl_cfg.experiment_name = args_cli.experiment_name
     if args_cli.seed is not None:
         rsl_rl_cfg.seed = args_cli.seed
     if args_cli.resume is not None:

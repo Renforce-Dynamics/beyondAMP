@@ -24,7 +24,8 @@ from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 from beyondAMP.obs_groups import AMPObsBaiscCfg
 
 import beyondAMP.mdp as mdp
-
+from robotlib.beyondMimic.robots.g1 import G1_CYLINDER_CFG
+import math
 ##
 # Scene definition
 ##
@@ -61,6 +62,7 @@ class MySceneCfg(InteractiveSceneCfg):
     )
     # robots
     robot: ArticulationCfg = MISSING
+    
     # lights
     light = AssetBaseCfg(
         prim_path="/World/light",
@@ -82,7 +84,18 @@ class MySceneCfg(InteractiveSceneCfg):
 
 @configclass
 class CommandsCfg:
-    pass
+    base_velocity = mdp.UniformVelocityCommandCfg(
+        asset_name="robot",
+        resampling_time_range=(10.0, 10.0),
+        rel_standing_envs=0.02,
+        rel_heading_envs=1.0,
+        heading_command=True,
+        heading_control_stiffness=0.5,
+        debug_vis=True,
+        ranges=mdp.UniformVelocityCommandCfg.Ranges(
+            lin_vel_x=(0.0, 0.8), lin_vel_y=(-0.5, 0.5), ang_vel_z=(-0.3, 0.3), heading=(-math.pi, math.pi)
+        ),
+    )
 
 
 @configclass
@@ -95,6 +108,7 @@ class ObservationsCfg:
     @configclass
     class PolicyCfg(ObsGroup):
         projected_gravity   = ObsTerm(func=mdp.projected_gravity, params={"asset_cfg": SceneEntityCfg("robot")})
+        velocity_commands = ObsTerm(func=mdp.generated_commands, params={"command_name": "base_velocity"})
         base_lin_vel        = ObsTerm(func=mdp.base_lin_vel, noise=Unoise(n_min=-0.5, n_max=0.5))
         base_ang_vel        = ObsTerm(func=mdp.base_ang_vel, noise=Unoise(n_min=-0.2, n_max=0.2))
         joint_pos           = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
@@ -107,6 +121,7 @@ class ObservationsCfg:
     @configclass
     class PrivilegedCfg(ObsGroup):
         projected_gravity   = ObsTerm(func=mdp.projected_gravity, params={"asset_cfg": SceneEntityCfg("robot")})
+        velocity_commands = ObsTerm(func=mdp.generated_commands, params={"command_name": "base_velocity"})
         base_lin_vel        = ObsTerm(func=mdp.base_lin_vel)
         base_ang_vel        = ObsTerm(func=mdp.base_ang_vel)
         joint_pos           = ObsTerm(func=mdp.joint_pos_rel)
@@ -147,7 +162,7 @@ class EventCfg:
         func=mdp.reset_to_ref_motion_dataset,
         mode="reset",
         params={
-            "pose_range": {"x": (0.0, 0.0), "y": (0.0, 0.0), "yaw": (0, 0)},
+            "pose_range": {"x": (0.0, 0.0), "y": (0.0, 0.0), "z": (0.05, 0.06),"yaw": (0, 0)},
             "velocity_range": {
                 "x": (0.0, 0.0),
                 "y": (0.0, 0.0),
@@ -172,6 +187,57 @@ class EventCfg:
 
 @configclass
 class RewardsCfg:
+    track_lin_vel_xy_exp = RewTerm(
+        func=mdp.track_lin_vel_xy_exp_torso, weight=35.0, params={"command_name": "base_velocity", "std": math.sqrt(0.3)}
+    )
+    track_ang_vel_z_exp = RewTerm(
+        func=mdp.track_ang_vel_z_exp_torso, weight=5.0, params={"command_name": "base_velocity", "std": math.sqrt(0.25)}
+    )
+    # pelvis_upright = RewTerm(  # guide the pelvis to be upright
+    #     func=mdp.pelvis_upright, weight=10.0
+    # )
+    # pelvis_forward = RewTerm(  # guide the pelvis to be forward (90 degree)
+    #     func=mdp.pelvis_forward_lean, weight=3.0
+    # )
+    # diagonal_limbs_air_time = RewTerm(
+    #     func=mdp.diagonal_limbs_air_time,
+    #     weight=30.0,
+    #     params={
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=["left_knee_link", "right_knee_link", "left_ankle_roll_link", "right_ankle_roll_link"]),
+    #         "command_name": "base_velocity",
+    #         "threshold": 0.2,
+    #     },
+    # )
+    knee_air_time = RewTerm(
+        func=mdp.feet_air_time,
+        weight=35.0,
+        params={
+            "sensor_cfg": SceneEntityCfg("contact_forces", body_names=[".*knee.*" , ".*ankle.*"]),
+            "command_name": "base_velocity",
+            "threshold": 0.15,
+        },
+    )
+    # single_limb_air_time = RewTerm(
+    #     func=mdp.single_limb_air_time,
+    #     weight=3.0,
+    #     params={
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=[".*knee.*" , ".*ankle.*"]),
+    #         "command_name": "base_velocity",
+    #         "threshold": 0.5,
+    #     },
+    # )
+    # any_limb_group_air_time = RewTerm(
+    #     func=mdp.any_limb_group_air_time,
+    #     weight=10.0,
+    #     params={
+    #         "sensor_cfg": SceneEntityCfg("contact_forces", body_names=[
+    #             "left_wrist_yaw_link", "left_knee_link", "left_ankle_roll_link",
+    #             "right_wrist_yaw_link", "right_knee_link", "right_ankle_roll_link"
+    #         ]),
+    #         "command_name": "base_velocity",
+    #         "threshold": 0.3,
+    #     },
+    # )
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-1e-1)
     joint_limit = RewTerm(
         func=mdp.joint_pos_limits,
@@ -180,13 +246,15 @@ class RewardsCfg:
     )
     undesired_contacts = RewTerm(
         func=mdp.undesired_contacts,
-        weight=-0.1,
+        weight=-1.0,
         params={
             "sensor_cfg": SceneEntityCfg(
                 "contact_forces",
-                body_names=[
-                    r"^(?!left_ankle_roll_link$)(?!right_ankle_roll_link$)(?!left_wrist_yaw_link$)(?!right_wrist_yaw_link$).+$"
-                ],
+                body_names=[".*torso.*",".*shoulder.*",".*hip.*",".*elbow.*"]
+                # body_names=[".*wrist.*",".*torso.*",".*shoulder.*",".*hip.*"]
+                    # r"^(?!left_ankle_roll_link$)(?!right_ankle_roll_link$)(?!left_wrist_yaw_link$)(?!right_wrist_yaw_link$).+$"
+                    # r"^(?!left_ankle_roll_link$)(?!right_ankle_roll_link$)(?!left_wrist_yaw_link$)(?!right_wrist_yaw_link$).+$"
+                ,
             ),
             "threshold": 1.0,
         },
@@ -196,13 +264,14 @@ class RewardsCfg:
 @configclass
 class TerminationsCfg:
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
-    # base_contact = DoneTerm(
-    #     func=mdp.illegal_contact,
-    #     params={"sensor_cfg": SceneEntityCfg(
-    #         "contact_forces", 
-    #         body_names="torso_link"
-    #     ), "threshold": 1.0},
-    # )
+    base_contact = DoneTerm(
+        func=mdp.illegal_contact,
+        params={"sensor_cfg": SceneEntityCfg(
+            "contact_forces", 
+            body_names=["torso_link" ,".*hip.*",".*shoulder.*",".*elbow.*"]
+            # body_names=["torso_link" , ".*wrist.*",".*hip.*",".*shoulder.*"]
+        ), "threshold": 1.0},
+    )
     base_height = DoneTerm(func=mdp.root_height_below_minimum, params={"minimum_height": 0.2})
     # bad_orientation = DoneTerm(func=mdp.bad_orientation, params={"limit_angle": 0.8})
 

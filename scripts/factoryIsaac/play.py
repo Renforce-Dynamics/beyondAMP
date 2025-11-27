@@ -113,9 +113,9 @@ def main():
     # if args_cli.determine:
     #     set_determine_reset(env_cfg)
     
-    # env_cfg.commands.base_velocity.ranges.lin_vel_x = (0.3, 0.8)
-    # env_cfg.commands.base_velocity.ranges.lin_vel_y = (0.0, 0.0)
-    # env_cfg.commands.base_velocity.ranges.ang_vel_z = (0.0, 0.0)
+    env_cfg.commands.base_velocity.ranges.lin_vel_x = (0.8, 1.0)
+    env_cfg.commands.base_velocity.ranges.lin_vel_y = (0.0, 0.0)
+    env_cfg.commands.base_velocity.ranges.ang_vel_z = (0.0, 0.0)
     
     # env_cfg.commands.base_velocity.debug_vis = False
     # env_cfg.scene.height_scanner.debug_vis = False

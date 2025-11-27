@@ -265,7 +265,8 @@ def run_simulator(_args_cli, sim: sim_utils.SimulationContext, scene: Interactiv
         # set root state
         root_states = robot.data.default_root_state.clone()
         root_states[:, :3] = motion_base_pos
-        root_states[:, :2] += scene.env_origins[:, :2]
+        root_states[:, :2] += (scene.env_origins[:, :2])
+        root_states[:, 2] += 0.1  # 增加高度 (z坐标)
         root_states[:, 3:7] = motion_base_rot
         root_states[:, 7:10] = motion_base_lin_vel
         root_states[:, 10:] = motion_base_ang_vel
@@ -358,7 +359,7 @@ def main():
     ]
     
     import os
-    input_dir = "./datasets/LAFAN1_Retargeting_Dataset/g1"
+    input_dir = "./data/tonpz"
     filenames = [
         os.path.splitext(f)[0]
         for f in os.listdir(input_dir)
@@ -368,7 +369,7 @@ def main():
     
     for filename in filenames:
         args_cli.input_file = f"{input_dir}/{filename}.csv"
-        args_cli.output_name = "datasets/temp/" + filename
+        args_cli.output_name = "data/temp/" + filename
 
         # Run the simulator
         run_simulator(

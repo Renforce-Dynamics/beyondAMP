@@ -67,7 +67,7 @@ def main():
         video_kwargs = {
             "video_folder": os.path.join(log_dir, "videos"),
             "step_trigger": lambda step: step % args_cli.video_interval == 0,
-            "video_length": args_cli.length,
+            "video_length": args_cli.video_length,
             "disable_logger": True,
         }
         print("[INFO] Recording videos during training.")
@@ -83,8 +83,9 @@ def main():
     # save resume path before creating a new log_dir
     if agent_cfg.resume:
         # get path to previous checkpoint
-        resume_path = agent_cfg.load_target
-        # get_checkpoint_path(log_root_path, agent_cfg.load_run, agent_cfg.load_checkpoint)
+        log_root_path = os.path.join("logs", "rsl_rl", agent_cfg.experiment_name)
+        log_root_path = os.path.abspath(log_root_path)
+        resume_path = get_checkpoint_path(log_root_path, agent_cfg.load_run, agent_cfg.load_checkpoint)
         print(f"[INFO]: Loading model checkpoint from: {resume_path}")
         # load previously trained model
         runner.load(resume_path)

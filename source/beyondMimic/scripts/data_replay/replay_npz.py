@@ -16,7 +16,8 @@ from isaaclab.app import AppLauncher
 
 # add argparse arguments
 parser = argparse.ArgumentParser(description="Replay converted motions.")
-parser.add_argument("--registry_name", type=str, required=True, help="The name of the wand registry.")
+parser.add_argument("--registry_name", type=str, default=None, help="The name of the wand registry.")
+parser.add_argument("--motion_file", type=str, default=None, help="Path to local motion file (.npz).")
 
 # append AppLauncher cli args
 AppLauncher.add_app_launcher_args(parser)
@@ -67,16 +68,23 @@ def run_simulator(sim: sim_utils.SimulationContext, scene: InteractiveScene):
     # Define simulation stepping
     sim_dt = sim.get_physics_dt()
 
-    registry_name = args_cli.registry_name
-    if ":" not in registry_name:  # Check if the registry name includes alias, if not, append ":latest"
-        registry_name += ":latest"
     import pathlib
 
-    import wandb
-
-    api = wandb.Api()
-    artifact = api.artifact(registry_name)
-    motion_file = str(pathlib.Path(artifact.download()) / "motion.npz")
+    # Determine motion file source
+    if args_cli.motion_file is not None:
+        # Use local file
+        motion_file = args_cli.motion_file
+    elif args_cli.registry_name is not None:
+        # Use wandb registry
+        import wandb
+        registry_name = args_cli.registry_name
+        if ":" not in registry_name:  # Check if the registry name includes alias, if not, append ":latest"
+            registry_name += ":latest"
+        api = wandb.Api()
+        artifact = api.artifact(registry_name)
+        motion_file = str(pathlib.Path(artifact.download()) / "motion.npz")
+    else:
+        raise ValueError("Either --motion_file or --registry_name must be provided.")
 
     motion = MotionLoader(
         motion_file,

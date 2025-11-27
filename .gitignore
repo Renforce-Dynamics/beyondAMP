@@ -165,7 +165,7 @@ cython_debug/
 
 .vscode/
 
-logs/
+# logs/
 
 source/fsmLab
 source/robotlib

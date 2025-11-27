@@ -72,8 +72,8 @@ class G1FlatAMPRunnerCfg(AMPRunnerCfg):
         amp_obs_terms = None,
     )
     amp_discr_hidden_dims = [256, 256]
-    amp_reward_coef = 0.5
-    amp_task_reward_lerp = 0.3
+    amp_reward_coef = 1.0
+    amp_task_reward_lerp = 0.05
 
 
 @configclass
@@ -92,7 +92,10 @@ class G1FlatAMPSoftTrackCfg(G1FlatAMPRunnerCfg):
         super().__post_init__()
         self.amp_data.amp_obs_terms = AMPObsSoftTrackTerms
         self.run_name = "soft_track"
-        self.amp_data.motion_files = []
+        self.amp_task_reward_lerp = 0.5
+        self.amp_reward_coef = 0.4
+        self.amp_data.motion_files = ["data/demo/like_a_dog.npz"]
+        # self.amp_data.motion_files = ["data/demo/punch_000.npz"]
 
 @configclass
 class G1FlatAMPHardTrackCfg(G1FlatAMPRunnerCfg):
