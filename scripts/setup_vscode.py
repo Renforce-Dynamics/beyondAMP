@@ -21,8 +21,9 @@ relative_extra_paths = [
     "./source/robotlib",
     "./source/rsl_rl_amp",
     "./source/amp_tasks",
-    "./source/beyondMimic",
     "./source/beyondAMP",
+    "./source/third_party/beyondMimic",
+    "./source/third_party/sim2simlib",
 ]
 
 # Normalize and convert relative paths to absolute paths

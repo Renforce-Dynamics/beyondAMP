@@ -47,8 +47,9 @@ modules=(
     "./source/robotlib"
     "./source/rsl_rl_amp"
     "./source/amp_tasks"
-    "./source/beyondMimic"
     "./source/beyondAMP"
+    "./source/third_party/beyondMimic"
+    "./source/third_party/sim2simlib"
 )
 
 install_modules "${modules[@]}"
