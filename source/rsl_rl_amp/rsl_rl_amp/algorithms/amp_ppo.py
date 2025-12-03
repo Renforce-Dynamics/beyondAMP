@@ -36,6 +36,7 @@ from rsl_rl_amp.modules import ActorCritic
 from rsl_rl_amp.storage import RolloutStorage
 from rsl_rl_amp.storage.replay_buffer import ReplayBuffer
 from beyondAMP.motion.motion_dataset import MotionDataset
+from rsl_rl_amp.modules.amp_discriminator import AMPDiscriminator
 
 class AMPPPO:
     actor_critic: ActorCritic
@@ -70,7 +71,7 @@ class AMPPPO:
         self.min_std = min_std
 
         # Discriminator components
-        self.discriminator = discriminator
+        self.discriminator:AMPDiscriminator = discriminator
         self.discriminator.to(self.device)
         self.amp_transition = RolloutStorage.Transition()
         self.amp_storage = ReplayBuffer(

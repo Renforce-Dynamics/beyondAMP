@@ -12,7 +12,7 @@ gym.register(
 )
 
 gym.register(
-    id="AMP-G1-29dof-Velocity",
+    id="beyondAMP-G1-29dof-Velocity",
     entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={

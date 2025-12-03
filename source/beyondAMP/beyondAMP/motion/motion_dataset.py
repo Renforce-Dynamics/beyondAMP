@@ -193,8 +193,9 @@ class MotionDataset:
 
 @configclass
 class MotionDatasetCfg:
-    asset_name:    str = "robot"
-    motion_files:  List[str] = MISSING
-    body_names:    List[str] = MISSING
-    amp_obs_terms: List[str] = MISSING
-    anchor_name:   str = MISSING
+    class_type          : type[MotionDataset] = MotionDataset
+    asset_name          : str = "robot"
+    motion_files        : List[str] = MISSING
+    body_names          : List[str] = MISSING
+    amp_obs_terms       : List[str] = MISSING
+    anchor_name         : str = MISSING

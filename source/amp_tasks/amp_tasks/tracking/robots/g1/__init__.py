@@ -7,7 +7,7 @@ from . import rsl_rl_ppo_cfg, flat_env_cfg, amp_env_cfg
 ##
 
 gym.register(
-    id="Tracking-Flat-G1-v0",
+    id="beyondMimic-Tracking-G1-Flat",
     entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
@@ -17,7 +17,7 @@ gym.register(
 )
 
 gym.register(
-    id="Tracking-Flat-G1-Wo-State-Estimation-v0",
+    id="beyondMimic-Tracking-G1-Flat-Wo-State-Estimation",
     entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
@@ -28,7 +28,7 @@ gym.register(
 
 
 gym.register(
-    id="Tracking-Flat-G1-AMP-v0",
+    id="beyondAMP-Tracking-G1-Flat-AMP",
     entry_point="isaaclab.envs:ManagerBasedRLEnv",
     disable_env_checker=True,
     kwargs={
