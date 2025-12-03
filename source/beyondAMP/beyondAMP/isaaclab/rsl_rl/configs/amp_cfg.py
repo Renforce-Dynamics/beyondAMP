@@ -12,6 +12,10 @@ class AMPPPOAlgorithmCfg(RslRlPpoAlgorithmCfg):
     class_name="AMPPPO"
     amp_replay_buffer_size: int = 100000
 
+@configclass
+class AMPPPOWeightedAlgorithmCfg(AMPPPOAlgorithmCfg):    
+    class_name="AMPPPOWeighted"
+    rescore_interval: int = 50
 
 @configclass
 class AMPRunnerCfg(RslRlOnPolicyRunnerCfg):

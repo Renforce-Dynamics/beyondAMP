@@ -1,6 +1,7 @@
 import torch
 from .vecenv_wrapper import RslRlVecEnvWrapper
 from beyondAMP.motion.motion_dataset import MotionDataset
+from beyondAMP.motion.weighted_motion_dataset import WeightedMotionDataset
 
 class AMPEnvWrapper(RslRlVecEnvWrapper):
     def __init__(self, env, clip_actions = None, *, motion_dataset=None):
@@ -9,7 +10,7 @@ class AMPEnvWrapper(RslRlVecEnvWrapper):
         if isinstance(motion_dataset, MotionDataset) or motion_dataset is None:
             self.motion_dataset = motion_dataset
         else:
-            self.motion_dataset = MotionDataset(motion_dataset, env.unwrapped, env.unwrapped.device)
+            self.motion_dataset = WeightedMotionDataset(motion_dataset, env.unwrapped, env.unwrapped.device)
             
         self.unwrapped.motion_dataset = self.motion_dataset
     
