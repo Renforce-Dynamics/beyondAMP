@@ -24,7 +24,7 @@ class WeightedMotionDataset(MotionDataset):
             assert transition_weights.shape[0] == num_transitions
             self.weights = transition_weights.to(device).clone()
         else:
-            self.weights = torch.ones_like(len(self.index_t)).to(device)
+            self.weights = torch.ones(len(self.index_t)).to(device)
 
         self._traj_weights = traj_weights
         self.norm_weights()

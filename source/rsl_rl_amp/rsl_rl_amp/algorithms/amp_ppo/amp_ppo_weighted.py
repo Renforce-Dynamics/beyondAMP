@@ -120,7 +120,7 @@ class AMPPPOWeighted(AMPPPO):
         # Step 2: discriminative scoring
         # -----------------------------
         if self.rescore_interval is not None:
-            if self.rescore_ptr % self.rescore_ptr == 0:
+            if self.rescore_ptr % self.rescore_interval == 0:
                 scores = self._compute_transition_scores()
                 new_weights = self._score_to_weight(scores, self.weight_update_coef)
                 self.amp_data.update_weights(new_weights)
