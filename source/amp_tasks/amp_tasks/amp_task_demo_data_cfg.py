@@ -1,5 +1,5 @@
 
-demo_punch_file = "data/demo/punch_000.npz"
+demo_punch_file = "data/demo/punch/punch.npz"
 
 soccer_shoot_file = "data/datasets/MocapG1Full/shoot.npz"
 
