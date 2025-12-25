@@ -8,6 +8,8 @@ from beyondAMP.obs_groups import AMPObsBaiscTerms, AMPObsSoftTrackTerms, AMPObsH
 
 from robotlib.robot_keys.g1_29d import g1_key_body_names, g1_anchor_name
 
+from amp_tasks.amp_task_demo_data_cfg import demo_punch_file
+
 @configclass
 class G1FlatPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
@@ -65,9 +67,7 @@ class G1FlatAMPRunnerCfg(AMPRunnerCfg):
         rescore_interval=100,
     )
     amp_data = MotionDatasetCfg(
-        motion_files=[
-            "data/demo/punch_000.npz"
-        ],
+        motion_files=[demo_punch_file],
         body_names = g1_key_body_names,
         anchor_name = g1_anchor_name,
         amp_obs_terms = None,

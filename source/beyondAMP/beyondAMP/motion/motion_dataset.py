@@ -251,12 +251,12 @@ class MotionDataset:
 
     def feed_forward_generator(self, num_mini_batch, mini_batch_size):
         for idx in range(0, num_mini_batch):
-            res_t, res_tp1 = [], []
             t, tp1 = self.sample_batch(mini_batch_size)
             res_t, res_tp1 = self.build_transition(t, tp1)
             yield res_t, res_tp1
             
     def build_transition(self, t, tp1):
+        res_t, res_tp1 = [], []
         for term in self.observation_terms:
             _t, _tp1 = getattr(self, term)[t], getattr(self, term)[tp1]
             res_t.append(_t); res_tp1.append(_tp1)

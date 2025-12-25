@@ -37,7 +37,7 @@ import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 import torch
 
-from rsl_rl_amp.algorithms import AMPPPO, PPO
+from rsl_rl_amp.algorithms import AMPPPO, PPO, AMPPPOWeighted
 from rsl_rl_amp.modules import ActorCritic, ActorCriticRecurrent
 from rsl_rl_amp.env import VecEnv
 from rsl_rl_amp.modules.amp_discriminator import AMPDiscriminator
