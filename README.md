@@ -121,3 +121,9 @@ With these tools, the dataset organization naturally aligns with the conventions
   year={2025}
 }
 ```
+https://github.com/Renforce-Dynamics/.github/blob/main/pics/wechat_group/group.jpg
+## Community
+
+| Renforce Dynamics | **Join our WeChat Group** |
+|:--|:--|
+| | <img src="https://github.com/Renforce-Dynamics/.github/blob/main/pics/wechat_group/group.jpg" alt="Renforce Dynamics WeChat Group" height="180"> |
